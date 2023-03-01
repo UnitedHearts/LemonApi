@@ -1,5 +1,5 @@
 namespace LemonApi;
-public class Registration
+public class CreateInfo
 {
     public string Name { get; set; }
     public string Email { get; set; }
