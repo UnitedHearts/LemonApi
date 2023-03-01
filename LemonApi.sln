@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LemonApi", "LemonApi\LemonApi.csproj", "{85BFD594-1A02-4125-B959-257CE8D75439}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LemonDB", "LemonDB\LemonDB.csproj", "{981A0D07-70DB-4AFB-9E10-A60AFF85513E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contracts", "Contracts\Contracts.csproj", "{601CEF2A-BB0E-4D6D-AE71-168C2E093CD0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{85BFD594-1A02-4125-B959-257CE8D75439}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{85BFD594-1A02-4125-B959-257CE8D75439}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{85BFD594-1A02-4125-B959-257CE8D75439}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{85BFD594-1A02-4125-B959-257CE8D75439}.Release|Any CPU.Build.0 = Release|Any CPU
+		{981A0D07-70DB-4AFB-9E10-A60AFF85513E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{981A0D07-70DB-4AFB-9E10-A60AFF85513E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{981A0D07-70DB-4AFB-9E10-A60AFF85513E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{981A0D07-70DB-4AFB-9E10-A60AFF85513E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{601CEF2A-BB0E-4D6D-AE71-168C2E093CD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{601CEF2A-BB0E-4D6D-AE71-168C2E093CD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{601CEF2A-BB0E-4D6D-AE71-168C2E093CD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{601CEF2A-BB0E-4D6D-AE71-168C2E093CD0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3884905C-2057-40E6-81A1-120D3563F9BD}
+	EndGlobalSection
+EndGlobal
