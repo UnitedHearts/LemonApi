@@ -1,6 +1,4 @@
 ﻿using Contracts.Mail;
-using LemonDB.Models;
-using MailKit;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LemonApi.Controllers

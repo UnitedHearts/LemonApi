@@ -37,10 +37,11 @@ namespace EmailService
             var emailMessage = new MimeMessage();
             emailMessage.From.Add(new MailboxAddress(_emailConfig.FromName, _emailConfig.FromAsress));
             emailMessage.To.Add(new MailboxAddress("", data.EmailTo));
-            emailMessage.Subject = data.Subject ?? "";
+            emailMessage.Subject = data.Subject;
 
             var bodyBuilder = new BodyBuilder();
-            bodyBuilder.TextBody = data.Message ?? "";
+            bodyBuilder.TextBody = data.Message;
+            bodyBuilder.HtmlBody = data.HTMLMessage;
             foreach (var file in data.Files)
             {
                 bodyBuilder.Attachments.Add(file.Name, Convert.FromBase64String(file.FileBase64));

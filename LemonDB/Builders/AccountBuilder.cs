@@ -36,9 +36,14 @@ public class AccountBuilder : InterfaceTemplate
         ((InterfaceTemplate)this)._alias.EmailConfirmed = !((InterfaceTemplate)this)._alias.EmailConfirmed;
         return this;
     }
+    public ThisBuilder Disable()
+    {
+        ((InterfaceTemplate)this)._alias.Active = false;
+        return this;
+    }
     public ThisBuilder Active()
     {
-        ((InterfaceTemplate)this)._alias.Active = !((InterfaceTemplate)this)._alias.Active;
+        ((InterfaceTemplate)this)._alias.Active = true;
         return this;
     }
     public Account Build()

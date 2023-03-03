@@ -3,20 +3,20 @@ using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+//Addservicestothecontainer.
 builder.Services.AddDatabaseModule(builder.Configuration);
 builder.Services.AddEmailModule(builder.Configuration);
 
 
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+//LearnmoreaboutconfiguringSwagger/OpenAPIathttps://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+//ConfiguretheHTTPrequestpipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -30,6 +30,8 @@ else
     });
 }
 
+app.UseExceptionHandler();
+app.UseStaticFiles();
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
