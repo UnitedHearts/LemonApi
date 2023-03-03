@@ -6,6 +6,7 @@ using LemonDB.Builders;
 using LemonDB.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace LemonApi.Controllers
 {
@@ -68,7 +69,8 @@ namespace LemonApi.Controllers
         [HttpGet("Confirm")]
         public async Task<IActionResult> Confirm(string token)
         {
-            var email = JWTExtansion.ValidateToken(token);
+            var claims= JWTExtansion.ValidateToken(token);
+            var email = claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
             var old = await _db.Accounts.FirstOrDefaultAsync(e => e.Email == email);
             if (old == null) throw new Exception("Аккаунт не найден");
             if (old.EmailConfirmed) return Ok("Почта уже подтверждена");
