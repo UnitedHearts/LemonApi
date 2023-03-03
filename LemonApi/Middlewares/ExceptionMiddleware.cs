@@ -32,7 +32,7 @@ public class ExceptionMiddleware
     private async Task HandleExceptionAsync(HttpContext context, Exception exception, Guid id)
     {
         context.Response.ContentType = "application/json";
-        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-        await context.Response.WriteAsync(new Error(id, exception.Message).ToString());
+        context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+        await context.Response.WriteAsJsonAsync(new Error(id, exception.Message));
     }
 }
