@@ -1,4 +1,6 @@
-﻿using Contracts.Mail;
+﻿using Contracts.Http;
+using Contracts.Mail;
+using LemonApi.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LemonApi.Controllers
@@ -15,9 +17,10 @@ namespace LemonApi.Controllers
         }
 
         [HttpPost("Send")]
-        public async Task Get(MailInfo mail)
+        public async Task<Answer<string>> Get(MailInfo mail)
         {
             await _mailService.SendAsync(mail);
+            return new(RequestStatus.SUCCESS);
         }
     }
 }

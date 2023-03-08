@@ -33,6 +33,6 @@ public class ExceptionMiddleware
     {
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-        await context.Response.WriteAsJsonAsync(new Error(id, exception.Message));
+        await context.Response.WriteAsJsonAsync(new Answer<Error>(new Error(id, exception.Message)));
     }
 }

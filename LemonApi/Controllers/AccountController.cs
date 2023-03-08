@@ -1,6 +1,7 @@
+using Contracts.Http;
 using Contracts.Mail;
-using EmailService;
 using LemonApi.Extensions;
+using LemonApi.Models;
 using LemonDB;
 using LemonDB.Builders;
 using LemonDB.Models;
@@ -24,20 +25,20 @@ namespace LemonApi.Controllers
         }
 
         [HttpGet("Get/{id}")]
-        public async Task<ActionResult<Account>> Get(Guid id)
+        public async Task<Answer<Account>> Get(Guid id)
         {
             var acc = await _db.Accounts.FirstOrDefaultAsync(e => e.Id == id);
             if (acc == null) throw new Exception("Аккаунт не найден");
-            return acc;
+            return new(acc);
         }
         [HttpGet("Get")]
-        public async Task<IEnumerable<Account>> GetAll()
+        public async Task<Answer<IEnumerable<Account>>> GetAll()
         {
-            return await _db.Accounts.ToListAsync();
+            return new(await _db.Accounts.ToListAsync());
         }
 
         [HttpPost("Create")]
-        public async Task<IActionResult> Create(CreateInfo data)
+        public async Task<Answer<Account>> Create(CreateInfo data)
         {
             data.Validate();
             if (_db.Accounts.FirstOrDefault(e => e.Email == data.Email) != null) throw new Exception("Аккаунт с указанным Email уже существует. Пожалуйста, проверьте почту напредмет письма-подтверждения");
@@ -51,10 +52,10 @@ namespace LemonApi.Controllers
 
             var mail = MailExtansion.ConfirmMail(data.Email);
             await _mailService.SendAsync(mail);
-            return Ok();
+            return new(account);
         }
         [HttpPut("Update")]
-        public async Task<IActionResult> Update(UpdateInfo data)
+        public async Task<Answer<Account>> Update(UpdateInfo data)
         {
             data.Validate();
             var old = await _db.Accounts.FirstOrDefaultAsync(e => e.Id == data.Id);
@@ -62,30 +63,40 @@ namespace LemonApi.Controllers
             var account = new AccountBuilder(old)
             .SetEmail(data.Email)
             .SetName(data.Name)
-            .SetPassword(data.Password);
+            .SetPassword(data.Password)
+            .Build();
             await _db.SaveChangesAsync();
-            return Ok();
+            return new(account);
+        }
+        [HttpPut("Disable")]
+        public async Task<Answer<string>> Disable(Guid id)
+        {
+            var old = await _db.Accounts.FirstOrDefaultAsync(e => e.Id == id);
+            if (old == null) throw new Exception("Деактивируемый аккаунт не найден");
+            var account = new AccountBuilder(old).Disable();
+            await _db.SaveChangesAsync();
+            return new(RequestStatus.SUCCESS);
         }
         [HttpGet("Confirm")]
-        public async Task<IActionResult> Confirm(string token)
+        public async Task<Answer<string>> Confirm(string token)
         {
             var claims= JWTExtansion.ValidateToken(token);
             var email = claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
             var old = await _db.Accounts.FirstOrDefaultAsync(e => e.Email == email);
             if (old == null) throw new Exception("Аккаунт не найден");
-            if (old.EmailConfirmed) return Ok("Почта уже подтверждена");
+            if (old.EmailConfirmed) return new("Почта уже подтверждена");
             var account = new AccountBuilder(old).Confirmed().Active();
             await _db.SaveChangesAsync();
-            return Ok("Почта подтверждена");
+            return new(RequestStatus.SUCCESS);
         }
         [HttpDelete("Delete")]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<Answer<string>> Delete(Guid id)
         {
             var old = await _db.Accounts.FirstOrDefaultAsync(e => e.Id == id);
             if (old == null) throw new Exception("Удаляемый аккаунт не найден");
-            var account = new AccountBuilder(old).Disable();
+            _db.Accounts.Remove(old);
             await _db.SaveChangesAsync();
-            return Ok();
+            return new(RequestStatus.SUCCESS);
         }
     }
 }
