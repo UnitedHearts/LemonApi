@@ -16,7 +16,7 @@ public class AuthorizationController
         _db = db;
     }
 
-    [HttpGet]
+    [HttpPost("Login")]
     public async Task<Answer<Account>> Login(LoginModel login)
     {
         login.Validate();
