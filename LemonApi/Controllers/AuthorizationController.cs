@@ -2,7 +2,7 @@
 using Contracts.Mail;
 using LemonApi.Extensions;
 using LemonDB;
-using LemonDB.Models;
+using LemonDB;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LemonApi.Controllers;

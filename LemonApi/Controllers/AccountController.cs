@@ -4,7 +4,7 @@ using LemonApi.Extensions;
 using LemonApi.Models;
 using LemonDB;
 using LemonDB.Builders;
-using LemonDB.Models;
+using LemonDB;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -37,7 +37,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("Create")]
-    public async Task<Answer<Account>> Create(CreateInfo data)
+    public async Task<Answer<Account>> Create(AccountCreateInfo data)
     {
         data.Validate();
         if (_db.Accounts.FirstOrDefault(e => e.Email == data.Email) != null) throw new Exception("Аккаунт с указанным Email уже существует. Пожалуйста, проверьте почту напредмет письма-подтверждения");

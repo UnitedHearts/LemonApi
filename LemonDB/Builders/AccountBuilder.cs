@@ -1,5 +1,4 @@
-using LemonDB.Models;
-using InterfaceTemplate = LemonDB.Interfaces.IDbEntityBuilder<LemonDB.Models.Account>;
+using InterfaceTemplate = LemonDB.Interfaces.IDbEntityBuilder<LemonDB.Account>;
 using ThisBuilder = LemonDB.Builders.AccountBuilder;
 
 namespace LemonDB.Builders;

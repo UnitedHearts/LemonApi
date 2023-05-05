@@ -1,4 +1,4 @@
-﻿using LemonDB.Models;
+﻿using LemonDB;
 using Microsoft.EntityFrameworkCore;
 
 namespace LemonDB;
@@ -8,6 +8,8 @@ public partial class LemonDbContext : DbContext
     private readonly string _connectionString;
 
     public virtual DbSet<Account> Accounts { get; set; }
+    public virtual DbSet<AccountPlayStatistic> Statistics { get; set; }
+    public virtual DbSet<Session> Sessions { get; set; }
 
     public LemonDbContext(string connectionString)
     {

@@ -1,4 +1,4 @@
-namespace LemonDB.Models;
+namespace LemonDB;
 
 public class Account : DbEntity
 {
