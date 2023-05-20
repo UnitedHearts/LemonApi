@@ -17,10 +17,10 @@ namespace LemonApi.Controllers
         }
 
         [HttpPost("Send")]
-        public async Task<Answer<string>> Get(MailInfo mail)
+        public async Task<string> Get(MailInfo mail)
         {
             await _mailService.SendAsync(mail);
-            return new(RequestStatus.SUCCESS);
+            return RequestStatus.SUCCESS;
         }
     }
 }

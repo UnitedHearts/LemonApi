@@ -1,7 +1,7 @@
 using Contracts.Http;
 
 namespace LemonApi;
-public class UpdateInfo : IValidatable
+public class AccountUpdateInfo : IValidatable
 {
     public Guid Id { get; set; }
     public string Name { get; set; }

@@ -1,3 +1,4 @@
+using LemonApi;
 using LemonApi.Extensions;
 using Microsoft.AspNetCore.HttpOverrides;
 
@@ -6,10 +7,14 @@ var builder = WebApplication.CreateBuilder(args);
 //Addservicestothecontainer.
 builder.Services.AddDatabaseModule(builder.Configuration);
 builder.Services.AddEmailModule(builder.Configuration);
+builder.Services.ConfigureSwagger();
+builder.Services.ConfigureAuthorization(builder.Configuration);
+builder.Services.ConfigureServices();
 
-
-
-builder.Services.AddControllers();
+builder.Services.AddDirectoryBrowser();
+builder.Services.AddControllers().AddNewtonsoftJson(options =>
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+);
 //LearnmoreaboutconfiguringSwagger/OpenAPIathttps://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -30,10 +35,15 @@ else
     });
 }
 
-app.UseExceptionHandler();
+app.UseMiddleware<ExceptionHandlerMiddleware>();
+
 app.UseStaticFiles();
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
+
 
 app.Run();

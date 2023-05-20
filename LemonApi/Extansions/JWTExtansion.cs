@@ -1,4 +1,6 @@
+using LemonApi.Models;
 using Microsoft.AspNetCore.Authentication.OAuth;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -9,12 +11,14 @@ namespace LemonApi.Extensions;
 public static class JWTExtansion
 {
     readonly static byte[] key = Encoding.ASCII.GetBytes("IWantToBeHappyButIAmIdiot");
+    public static SymmetricSecurityKey GetSymmetricSecurityKey() => new SymmetricSecurityKey(key);
     public static IEnumerable<Claim> ValidateToken(string token)
     {
-        if (token == null) return null;
-        var tokenHandler = new JwtSecurityTokenHandler();
         try
         {
+            if (token.IsNullOrEmpty()) throw new Exception();
+
+            var tokenHandler = new JwtSecurityTokenHandler();
             tokenHandler.ValidateToken(token, new TokenValidationParameters()
             {
                 ValidateIssuerSigningKey = true,
@@ -31,10 +35,19 @@ public static class JWTExtansion
             return Array.Empty<Claim>();
         }
     }
-    public static string GetToken(string data)
+    public static string GetToken(string email)
     {
-        var claims = new List<Claim> { new Claim(ClaimTypes.Email, data) };
+        return GetToken(new[] {new Claim(ClaimTypes.Email, email) }, JWTConfig.Default);
+    }
+    public static string GetToken(IEnumerable<Claim> claims)
+    {
+        return GetToken(claims, JWTConfig.Default);
+    }
+    public static string GetToken(IEnumerable<Claim> claims, JWTConfig jwtConfig)
+    {
         var jwt = new JwtSecurityToken(
+            audience: jwtConfig.Audience,
+            issuer: jwtConfig.Issuer,
             claims: claims,
             expires: DateTime.UtcNow.Add(TimeSpan.FromDays(2)),
             signingCredentials: new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256));

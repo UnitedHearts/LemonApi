@@ -1,4 +1,4 @@
-namespace LemonDB.Interfaces;
+  namespace LemonDB.Interfaces;
 
 public interface IEntity
 {

@@ -3,10 +3,10 @@ using System.Net;
 
 namespace LemonApi;
 
-public class ExceptionMiddleware
+public class ExceptionHandlerMiddleware
 {
     private readonly RequestDelegate _next;
-    public ExceptionMiddleware(RequestDelegate next)
+    public ExceptionHandlerMiddleware(RequestDelegate next)
     {
         _next = next;
     }
@@ -33,6 +33,6 @@ public class ExceptionMiddleware
     {
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-        await context.Response.WriteAsJsonAsync(new Answer<Error>(new Error(id, exception.Message)));
+        await context.Response.WriteAsJsonAsync(new Response<Error>(new Error(id, exception.Message)));
     }
 }

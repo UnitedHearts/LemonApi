@@ -1,12 +1,12 @@
 ﻿namespace Contracts.Http;
-public class Answer<T>
+public class Response<T>
 {
-    public Answer(Error? error)
+    public Response(Error? error)
     {
         Error = error;
     }
 
-    public Answer(T? data)
+    public Response(T? data)
     {
         Data = data;
     }

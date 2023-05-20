@@ -1,37 +1,28 @@
-﻿using InterfaceTemplate = LemonDB.Interfaces.IDbEntityBuilder<LemonDB.AccountPlayStatistic>;
+﻿using InterfaceTemplate = LemonDB.Interfaces.IDbEntityBuilder<LemonDB.AccountStatistic>;
 using ThisBuilder = LemonDB.Builders.AccountStatisticBuilder;
 
 namespace LemonDB.Builders;
 
 public class AccountStatisticBuilder : InterfaceTemplate
 {
-    AccountPlayStatistic InterfaceTemplate._alias { get; set; }
+    AccountStatistic InterfaceTemplate._alias { get; set; }
+    AccountStatistic Empty => new() { Deaths = 0, Wins = 0, Plays = 0 };
     public AccountStatisticBuilder()
     {
-        ((InterfaceTemplate)this)._alias = new() { Deaths = 0, Money = 0, TotalMoney = 0, Wins = 0 };
+        ((InterfaceTemplate)this)._alias = Empty;
     }
-    public AccountStatisticBuilder(AccountPlayStatistic template)
+    public AccountStatisticBuilder(AccountStatistic template)
     {
         ((InterfaceTemplate)this)._alias = template;
     }
     public AccountStatisticBuilder(Account account)
     {
-        ((InterfaceTemplate)this)._alias = new() { Account = account, Deaths = 0, Money = 0, TotalMoney = 0, Wins = 0 };
+        ((InterfaceTemplate)this)._alias = new() { AccountId = account.Id, Deaths = 0, Wins = 0, Plays = 0 };
     }
 
     public ThisBuilder SetAccount(Account account)
     {
-        ((InterfaceTemplate)this)._alias.Account = account;
-        return this;
-    }
-    public ThisBuilder SetMoney(double money)
-    {
-        ((InterfaceTemplate)this)._alias.Money = money;
-        return this;
-    }
-    public ThisBuilder SetTotalMoney(int totalMoney)
-    {
-        ((InterfaceTemplate)this)._alias.TotalMoney = totalMoney;
+        ((InterfaceTemplate)this)._alias.AccountId = account.Id;
         return this;
     }
     public ThisBuilder SetDeaths(int deaths)
@@ -44,11 +35,30 @@ public class AccountStatisticBuilder : InterfaceTemplate
         ((InterfaceTemplate)this)._alias.Wins = wins;
         return this;
     }
-
-    public AccountPlayStatistic Build()
+    public ThisBuilder SetPlays(int plays)
+    {
+        ((InterfaceTemplate)this)._alias.Plays = plays;
+        return this;
+    }
+    public ThisBuilder AddDeaths(int deaths)
+    {
+        ((InterfaceTemplate)this)._alias.Deaths += deaths;
+        return this;
+    }
+    public ThisBuilder AddWins(int wins)
+    {
+        ((InterfaceTemplate)this)._alias.Wins += wins;
+        return this;
+    }
+    public ThisBuilder AddPlays(int plays)
+    {
+        ((InterfaceTemplate)this)._alias.Plays += plays;
+        return this;
+    }
+    public AccountStatistic Build()
     {
         var alias = ((InterfaceTemplate)this)._alias;
-        ((InterfaceTemplate)this)._alias = new();
+        ((InterfaceTemplate)this)._alias = Empty;
         return alias;
     }
 }

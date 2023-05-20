@@ -3,7 +3,11 @@
     public class PlayerResult
     {
         public string Email { get; set; }
-        public double Coins { get; set; }
-        public bool Dead{ get; set; }
+        public int Rank { get; set; }
+        public int Coins { get; set; }
+        public int Fails { get; set; }
+        public int Punches { get; set; }
+        public double SpawnTimePoint { get; set; }
+        public double? DeadTimePoint { get; set; }
     }
 }

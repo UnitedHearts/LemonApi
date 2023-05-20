@@ -22,7 +22,37 @@ namespace LemonDB.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("LemonDB.Models.Account", b =>
+            modelBuilder.Entity("AccountSession", b =>
+                {
+                    b.Property<Guid>("ParticipantsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SessionsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ParticipantsId", "SessionsId");
+
+                    b.HasIndex("SessionsId");
+
+                    b.ToTable("AccountSession", (string)null);
+                });
+
+            modelBuilder.Entity("AccountStuff", b =>
+                {
+                    b.Property<Guid>("AccountsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("StuffsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("AccountsId", "StuffsId");
+
+                    b.HasIndex("StuffsId");
+
+                    b.ToTable("AccountStuff", (string)null);
+                });
+
+            modelBuilder.Entity("LemonDB.Account", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -46,9 +76,274 @@ namespace LemonDB.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Role")
+                        .HasColumnType("int");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Accounts");
+                    b.ToTable("Accounts", (string)null);
+                });
+
+            modelBuilder.Entity("LemonDB.AccountStatistic", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AccountId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Deaths")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Plays")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Wins")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountId")
+                        .IsUnique();
+
+                    b.ToTable("AccountStatistic", (string)null);
+                });
+
+            modelBuilder.Entity("LemonDB.Cash", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AccountId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("Current")
+                        .HasColumnType("float");
+
+                    b.Property<double>("TotalHistory")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountId")
+                        .IsUnique();
+
+                    b.ToTable("Cashs", (string)null);
+                });
+
+            modelBuilder.Entity("LemonDB.Map", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GameKey")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MaxPlayersCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Maps", (string)null);
+                });
+
+            modelBuilder.Entity("LemonDB.PlayerSessionStat", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AccountId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Coins")
+                        .HasColumnType("int");
+
+                    b.Property<double>("DeadTimePoint")
+                        .HasColumnType("float");
+
+                    b.Property<int>("Fails")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Punches")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Rank")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("SessionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("SpawnTimePoint")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
+
+                    b.HasIndex("SessionId");
+
+                    b.ToTable("PlayersSessionsStats", (string)null);
+                });
+
+            modelBuilder.Entity("LemonDB.Session", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("Duration")
+                        .HasColumnType("float");
+
+                    b.Property<string>("GameKey")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("MapId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("StartPlayersCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MapId");
+
+                    b.ToTable("Sessions", (string)null);
+                });
+
+            modelBuilder.Entity("LemonDB.Stuff", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("GameKey")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Stuffs", (string)null);
+                });
+
+            modelBuilder.Entity("AccountSession", b =>
+                {
+                    b.HasOne("LemonDB.Account", null)
+                        .WithMany()
+                        .HasForeignKey("ParticipantsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("LemonDB.Session", null)
+                        .WithMany()
+                        .HasForeignKey("SessionsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("AccountStuff", b =>
+                {
+                    b.HasOne("LemonDB.Account", null)
+                        .WithMany()
+                        .HasForeignKey("AccountsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("LemonDB.Stuff", null)
+                        .WithMany()
+                        .HasForeignKey("StuffsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("LemonDB.AccountStatistic", b =>
+                {
+                    b.HasOne("LemonDB.Account", null)
+                        .WithOne("Statistic")
+                        .HasForeignKey("LemonDB.AccountStatistic", "AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("LemonDB.Cash", b =>
+                {
+                    b.HasOne("LemonDB.Account", null)
+                        .WithOne("Cash")
+                        .HasForeignKey("LemonDB.Cash", "AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("LemonDB.PlayerSessionStat", b =>
+                {
+                    b.HasOne("LemonDB.Account", "Account")
+                        .WithMany()
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("LemonDB.Session", "Session")
+                        .WithMany()
+                        .HasForeignKey("SessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+
+                    b.Navigation("Session");
+                });
+
+            modelBuilder.Entity("LemonDB.Session", b =>
+                {
+                    b.HasOne("LemonDB.Map", "Map")
+                        .WithMany()
+                        .HasForeignKey("MapId");
+
+                    b.Navigation("Map");
+                });
+
+            modelBuilder.Entity("LemonDB.Account", b =>
+                {
+                    b.Navigation("Cash")
+                        .IsRequired();
+
+                    b.Navigation("Statistic")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
