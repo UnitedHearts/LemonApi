@@ -50,11 +50,11 @@ public class GamePlayController : LemonController
     }
 
     [HttpPost("Sessions/Status")]
-    public async Task<Session> Status(Guid id)
+    public async Task<SessionStatusResponse> Status(Guid id)
     {
         var session = await _db.Sessions.FirstOrDefaultAsync(e => e.Id == id);
-        if (session is null) throw new Exception("Сессия не найдена");
-        return session;
+        var searchers = _db.Sessions.Where(e => e.State == SessionState.AWAIT.ToString() || e.State == SessionState.PENDING.ToString()).Select(e => e.StartPlayersCount).Sum();
+        return new() { Session = session, Searchers = searchers };
     }
 
     [HttpPost("Sessions/StopSearch")]
@@ -69,13 +69,12 @@ public class GamePlayController : LemonController
         return "SUCCESS";
     }
 
-    [Authorize(Roles ="Server")]
     [HttpPost("Sessions/Process")]
-    public async Task<Session> ProcessSession(string host)
+    public async Task<Session> ProcessSession(ProcessSessionData data)
     {
         var session = await _db.Sessions.FirstOrDefaultAsync(e => e.State == SessionState.AWAIT.ToString() && e.StartPlayersCount > 0);
         if (session is null) throw new Exception("Сессий не найдено");
-        new SessionBuilder(session).SetState(SessionState.PENDING.ToString()).SetKey(host);
+        new SessionBuilder(session).SetState(SessionState.PENDING.ToString()).SetKey(data.Host);
         await _db.SaveChangesAsync();
         return session;
     }

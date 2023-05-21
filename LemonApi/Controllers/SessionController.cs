@@ -18,18 +18,18 @@ public class SessionController : LemonController
     {
     }
 
-    [HttpGet("Get/{id}")]
-    public async Task<Session> Get(Guid id)
-    {
-        return await _db.GetSessionAsync(id);
-    }
-
     [HttpGet("Get")]
     public async Task<IEnumerable<Session>> GetAll()
     {
         return await _db.Sessions.Include(e => e.Participants)
                                     .Include(e => e.Map)
                                     .ToListAsync();
+    }
+
+    [HttpGet("Get/{id}")]
+    public async Task<Session> Get(Guid id)
+    {
+        return await _db.GetSessionAsync(id);
     }
 
     [HttpPost("Create")]
@@ -53,14 +53,15 @@ public class SessionController : LemonController
     [HttpPut("Update")]
     public async Task<Session> Update(SessionUpdateData data)
     {
-        var accounts = data.Participants.Select(e => _db.Accounts.FirstOrDefault(a => a.Email == e.Email));
+        var accounts = data.Participants?.Select(e => _db.Accounts.FirstOrDefault(a => a.Email == e.Email));
         var session = await _db.GetSessionAsync(Guid.Parse(data.SessionId));
         switch (SessionStateExtansion.ToSessionState(data.State))
         {
             case SessionState.PENDING:
                 break;
             case SessionState.PLAYING:
-                session.Participants = accounts.ToList();
+                if(data.Participants is not null) session.Participants = accounts.ToList();
+                session.State = SessionState.PLAYING.ToString();
                 break;
             case SessionState.OVER:
                 PlayerSessionStatBuilder statBuilder;

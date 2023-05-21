@@ -26,6 +26,17 @@ public class AccountController : LemonController
         _env = env;
     }
 
+    [HttpGet("Get")]
+    public async Task<IEnumerable<Account>> GetAll()
+    {
+        return await _db.Accounts
+                            .Include(e => e.Statistic)
+                            .Include(e => e.Sessions)
+                            .Include(e => e.Stuffs)
+                            .Include(e => e.Cash)
+                            .ToListAsync();
+    }
+    
     [HttpGet("Get/{id}")]
     public async Task<Account> Get(Guid id)
     {
@@ -41,15 +52,31 @@ public class AccountController : LemonController
         return acc;
     }
 
-    [HttpGet("Get")]
-    public async Task<IEnumerable<Account>> GetAll()
+    [AllowAnonymous]
+    [HttpGet("Confirm")]
+    public async Task<ContentResult> Confirm(string token)
     {
-        return await _db.Accounts
-                            .Include(e => e.Statistic)
-                            .Include(e => e.Sessions)
-                            .Include(e => e.Stuffs)
-                            .Include(e => e.Cash)
-                            .ToListAsync();
+        var claims = JWTExtansion.ValidateToken(token);
+        var email = claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
+        if (email == null)
+            throw new Exception("Недействительный токен");
+
+        var old = await _db.GetAccountAsync(email);
+        if (old == null)
+            throw new Exception("Аккаунт не найден");
+
+        if (old.EmailConfirmed)
+            throw new Exception("Аккаунт не найден");
+        var freeCharacter = _db.Stuffs.FirstOrDefault(s => s.GameKey == "Character_Duck");
+        var account = new AccountBuilder(old)
+                            .Confirmed()
+                            .Active()
+                            .SetCash()
+                            .SetStatistic()
+                            .AddStuff(freeCharacter);
+        await _db.SaveChangesAsync();
+        return base.Content("<div>SUCCESS</div>", "text/html");
+
     }
 
     [AllowAnonymous]
@@ -57,7 +84,7 @@ public class AccountController : LemonController
     public async Task<Account> Create(AccountCreateInfo data)
     {
         data.Validate();
-        if (_db.Accounts.FirstOrDefault(e => e.Email == data.Email) != null) 
+        if (_db.Accounts.FirstOrDefault(e => e.Email == data.Email) != null)
             throw new Exception("Аккаунт с указанным Email уже существует. Пожалуйста, проверьте почту напредмет письма-подтверждения");
         var account = new AccountBuilder()
                             .SetEmail(data.Email)
@@ -101,33 +128,6 @@ public class AccountController : LemonController
         var account = new AccountBuilder(old).Disable();
         await _db.SaveChangesAsync();
         return RequestStatus.SUCCESS;
-    }
-
-    [AllowAnonymous]
-    [HttpGet("Confirm")]
-    public async Task<ContentResult> Confirm(string token)
-    {
-        var claims = JWTExtansion.ValidateToken(token);
-        var email = claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
-        if (email == null)
-            throw new Exception("Недействительный токен");
-
-        var old = await _db.GetAccountAsync(email);
-        if (old == null)
-            throw new Exception("Аккаунт не найден");
-
-        if (old.EmailConfirmed)
-            throw new Exception("Аккаунт не найден");
-        var freeCharacter = _db.Stuffs.FirstOrDefault(s => s.GameKey == "Character_Duck");
-        var account = new AccountBuilder(old)
-                            .Confirmed()
-                            .Active()
-                            .SetCash()
-                            .SetStatistic()
-                            .AddStuff(freeCharacter);
-        await _db.SaveChangesAsync();
-        return base.Content("<div>SUCCESS</div>", "text/html");
-
     }
 
     [Authorize(Roles = "Admin, Server")]

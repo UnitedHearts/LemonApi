@@ -18,16 +18,17 @@ public class CRUDController : LemonController
     }
 
     #region ----------- Map -----------
-    [HttpGet("Map/Get/{id}")]
-    public async Task<Map> GetMap(Guid id)
-    {
-        return await _db.Maps.FirstOrDefaultAsync(map => map.Id == id) ?? throw new Exception("Карта не найдена");
-    }
 
     [HttpGet("Map/Get")]
     public async Task<IEnumerable<Map>> GetMap()
     {
         return await _db.Maps.ToListAsync();
+    }
+
+    [HttpGet("Map/Get/{id}")]
+    public async Task<Map> GetMap(Guid id)
+    {
+        return await _db.Maps.FirstOrDefaultAsync(map => map.Id == id) ?? throw new Exception("Карта не найдена");
     }
 
     [HttpPost("Map/Create")]
@@ -69,16 +70,17 @@ public class CRUDController : LemonController
     #endregion
 
     #region ---------- Stuff ----------
-    [HttpGet("Stuff/Get/{id}")]
-    public async Task<Stuff> GetStuff(Guid id)
-    {
-        return await _db.Stuffs.FirstOrDefaultAsync(s => s.Id == id) ?? throw new Exception("Продукт не найден");
-    }
 
     [HttpGet("Stuff/Get")]
     public async Task<IEnumerable<Stuff>> GetStuff()
     {
         return await _db.Stuffs.ToListAsync();
+    }
+
+    [HttpGet("Stuff/Get/{id}")]
+    public async Task<Stuff> GetStuff(Guid id)
+    {
+        return await _db.Stuffs.FirstOrDefaultAsync(s => s.Id == id) ?? throw new Exception("Продукт не найден");
     }
 
     [HttpPost("Stuff/Create")]
