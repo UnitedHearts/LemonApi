@@ -18,7 +18,7 @@ public static class LemonDbExtansion
     public static async Task<Account> GetAccountAsync(this LemonDbContext _db, string email)
     {
         return await _db.Accounts.Include(e => e.Statistic)
-                                    .Include(e => e.Sessions)
+                                    .Include(e => e.Sessions).ThenInclude(e => e.Map)
                                     .Include(e => e.Stuffs)
                                     .Include(e => e.Cash)
                                     .FirstOrDefaultAsync(e => e.Email == email)

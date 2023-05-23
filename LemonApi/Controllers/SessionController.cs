@@ -84,11 +84,22 @@ public class SessionController : LemonController
                                     .Build();
                     if (stat.Id == Guid.Empty)
                         _db.PlayersSessionsStats.Add(stat);
+                    acc.Statistic.Plays++;
+                    if (participant.Rank == 1) acc.Statistic.Wins++;
+                    if (participant.DeadTimePoint != 0) acc.Statistic.Deaths++;
                 }
                 session.State = SessionState.OVER.ToString();
                 break;
         }
         await _db.SaveChangesAsync();
         return session;
+    }
+
+    [HttpGet("Statistic")]
+    public async Task<PlayerSessionStat> GetStatistic(Guid sessionId)
+    {
+        var stat = await _db.PlayersSessionsStats.IgnoreAutoIncludes().FirstOrDefaultAsync(e => e.Session.Id == sessionId && e.Account == ContextUser);
+        if (stat is null) throw new Exception("Статистика по указанной сессиии не найдена");
+        return stat;
     }
 }
