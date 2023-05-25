@@ -56,6 +56,11 @@ public class PlayerSessionStatBuilder : InterfaceTemplate
         ((InterfaceTemplate)this)._alias.DeadTimePoint = dead;
         return this;
     }
+    public ThisBuilder SetExp(double exp)
+    {
+        ((InterfaceTemplate)this)._alias.Exp = exp;
+        return this;
+    }
     public PlayerSessionStat Build()
     {
         var alias = ((InterfaceTemplate)this)._alias;

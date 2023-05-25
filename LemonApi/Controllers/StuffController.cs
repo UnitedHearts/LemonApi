@@ -22,13 +22,13 @@ namespace LemonApi.Controllers
         {
             var stuff = _db.Stuffs.FirstOrDefault(e => e.Id == id);
             if(stuff == null) throw new Exception("Предмет не найден в магазине");
-            var account = ContextUser;
-            if (account.Stuffs.Contains(stuff)) throw new Exception("Предмет уже куплен");
-            if (account.Cash.Current < stuff.Price) throw new Exception("Недостаточно монет");
-            new CashBuilder(new AccountBuilder(account).AddStuff(stuff).Build().Cash).AddCash(-stuff.Price);
+            if (ContextUser.Stuffs.Contains(stuff)) throw new Exception("Предмет уже куплен");
+            if (ContextUser.Cash.Current < stuff.Price) throw new Exception("Недостаточно монет");
+            new CashBuilder(new AccountBuilder(ContextUser).AddStuff(stuff).Build().Cash).AddCash(-stuff.Price);
             await _db.SaveChangesAsync();
-            return account;
+            return ContextUser;
         }
+
         [HttpGet("Get")]
         public async Task<IEnumerable<Stuff>> Get()
         {

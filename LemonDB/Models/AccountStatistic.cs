@@ -6,4 +6,5 @@ public class AccountStatistic : DbEntity
     public int Plays { get; set; }
     public int Wins { get; set; }
     public int Deaths { get; set; }
+    public double Exp { get; set; }
 }

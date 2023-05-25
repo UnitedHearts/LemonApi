@@ -7,6 +7,7 @@ public class PlayerSessionStat : DbEntity
     public int Coins { get; set; }
     public int Fails { get; set; }
     public int Punches { get; set; }
+    public double Exp { get; set; }
     public double SpawnTimePoint{ get; set; }
     public double DeadTimePoint { get; set; }
     

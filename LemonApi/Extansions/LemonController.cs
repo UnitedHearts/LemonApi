@@ -24,9 +24,9 @@ public abstract class LemonController : ControllerBase
                 throw new Exception("Невалидный токен");
             var user = _db.Accounts
                             .Include(a => a.Cash)
-                            .Include(a => a.Sessions).ThenInclude(e => e.Map)
                             .Include(a => a.Stuffs)
                             .Include(a => a.Statistic)
+                            //.Include(a => a.Sessions).ThenInclude(e => e.Map)
                             .FirstOrDefault(e => e.Email == email);
             if (user == null)
                 throw new Exception("Аккаунт не найден");

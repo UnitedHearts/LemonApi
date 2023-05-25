@@ -3,6 +3,7 @@ using LemonApi.Models;
 using LemonDB;
 using LemonDB.Builders;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -65,11 +66,14 @@ public class SessionController : LemonController
                 break;
             case SessionState.OVER:
                 PlayerSessionStatBuilder statBuilder;
-                foreach (var participant in data.Participants)
+                 var participants = CalculateRank(data.Participants, session.Duration);
+                foreach (var participant in participants)
                 {
                     var acc = await _db.GetAccountAsync(participant.Email);
                     var stat = await _db.PlayersSessionsStats.FirstOrDefaultAsync(e => e.Session.Id == session.Id && e.Account.Id == acc.Id);
-                    
+
+                    var exp = (int)GetScore(participant, session.Duration);
+                    exp = exp > 100 ? exp : new Random().Next(100, 150);
                     statBuilder = stat is null ? new() : new(stat);
                     new CashBuilder(acc.Cash).AddCash(participant.Coins - (stat is null ? 0 : stat.Coins));
 
@@ -79,12 +83,14 @@ public class SessionController : LemonController
                                     .SetCoins(participant.Coins)
                                     .SetFails(participant.Fails)
                                     .SetPunches(participant.Punches)
+                                    .SetExp(exp)
                                     .SetSession(session)
                                     .SetAccount(acc)
                                     .Build();
                     if (stat.Id == Guid.Empty)
                         _db.PlayersSessionsStats.Add(stat);
                     acc.Statistic.Plays++;
+                    acc.Statistic.Exp += exp;
                     if (participant.Rank == 1) acc.Statistic.Wins++;
                     if (participant.DeadTimePoint != 0) acc.Statistic.Deaths++;
                 }
@@ -95,11 +101,43 @@ public class SessionController : LemonController
         return session;
     }
 
+    [HttpGet("LastSession")]
+    public async Task<Session> GetLastSession()
+    {
+        var session = await _db.Sessions
+                                    .OrderByDescending(s => s.Date)
+                                    .Include(s => s.Map)
+                                    .Include(s => s.Participants)
+                                    .FirstOrDefaultAsync(s => s.Participants.Contains(ContextUser));
+        if (session is null) throw new Exception("Игрок не сыграл ни одной игры");
+        return session;
+    }
     [HttpGet("Statistic")]
     public async Task<PlayerSessionStat> GetStatistic(Guid sessionId)
     {
         var stat = await _db.PlayersSessionsStats.IgnoreAutoIncludes().FirstOrDefaultAsync(e => e.Session.Id == sessionId && e.Account == ContextUser);
         if (stat is null) throw new Exception("Статистика по указанной сессиии не найдена");
         return stat;
+    }
+    [HttpGet("RatingTable")]
+    public async Task<IEnumerable<PlayerSessionStat>> GetRatingTable(Guid sessionId)
+    {
+        return _db.PlayersSessionsStats.Include(s => s.Account).Where(s => s.Session.Id == sessionId).OrderBy(s => s.Rank).AsEnumerable();
+    }
+
+    IEnumerable<PlayerResult> CalculateRank(IEnumerable<PlayerResult> results, double sessionTime)
+    {
+        return results.Select(r => (Stat: r, Score: GetScore(r, sessionTime))).OrderByDescending(s => s.Score).Select((r, index) => { r.Stat.Rank = index + 1; return r.Stat; });
+    }
+    double GetScore(PlayerResult result, double sessionTime)
+    {
+        var m_coin = 6;
+        var m_punches= 2;
+        var m_time= 0.5;
+        var m_fails = 1.5;
+        var m_alive = 1.2;
+        var isAlive = result.DeadTimePoint is null;
+
+        return (result.Coins * m_coin + result.Punches * m_punches + (double)(isAlive ? sessionTime * m_time : result.DeadTimePoint * m_time) - result.Fails * m_fails) * (isAlive ? m_alive : 1); 
     }
 }
