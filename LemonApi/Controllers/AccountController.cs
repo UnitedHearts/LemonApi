@@ -84,7 +84,10 @@ public class AccountController : LemonController
     public async Task<Account> Create(AccountCreateInfo data)
     {
         data.Validate();
-        if (_db.Accounts.FirstOrDefault(e => e.Email == data.Email) != null)
+        var acc = _db.Accounts.FirstOrDefault(e => e.Email == data.Email);
+        if (acc is not null && acc.EmailConfirmed)
+            throw new Exception("Аккаунт с указанным Email уже существует");
+        else if(acc is not null)
             throw new Exception("Аккаунт с указанным Email уже существует. Пожалуйста, проверьте почту напредмет письма-подтверждения");
         var account = new AccountBuilder()
                             .SetEmail(data.Email)
@@ -95,7 +98,7 @@ public class AccountController : LemonController
         await _db.Accounts.AddAsync(account);
         await _db.SaveChangesAsync();
 
-        var mail = MailExtansion.ConfirmMail(data.Email, _env.Host);
+        var mail = MailExtansion.ConfirmMail(data.Email, _env.Host, data.Name);
         await _mailService.SendAsync(mail);
         return account;
     }

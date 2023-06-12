@@ -21,14 +21,6 @@ public class ExceptionHandlerMiddleware
             await HandleExceptionAsync(httpContext, ex, Guid.NewGuid());
         }
     }
-
-    ///<summary>
-    ///Обработчик общих ошибок
-    ///</summary>
-    ///<paramname="context"></param>
-    ///<paramname="exception"></param>
-    ///<paramname="id"></param>
-    ///<returns></returns>
     private async Task HandleExceptionAsync(HttpContext context, Exception exception, Guid id)
     {
         context.Response.ContentType = "application/json";

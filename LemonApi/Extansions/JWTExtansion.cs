@@ -25,6 +25,7 @@ public static class JWTExtansion
                 IssuerSigningKey = new SymmetricSecurityKey(key),
                 ValidateIssuer = false,
                 ValidateAudience = false,
+                ValidateLifetime = false,
                 ClockSkew = TimeSpan.Zero
             }, out SecurityToken validatedToken);
             var jwtToken = (JwtSecurityToken)validatedToken;
@@ -43,14 +44,16 @@ public static class JWTExtansion
     {
         return GetToken(claims, JWTConfig.Default);
     }
-    public static string GetToken(IEnumerable<Claim> claims, JWTConfig jwtConfig)
+    public static string GetToken(IEnumerable<Claim> claims, 
+                                    JWTConfig jwtConfig)
     {
         var jwt = new JwtSecurityToken(
             audience: jwtConfig.Audience,
             issuer: jwtConfig.Issuer,
             claims: claims,
-            expires: DateTime.UtcNow.Add(TimeSpan.FromDays(2)),
-            signingCredentials: new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256));
+            expires: DateTime.UtcNow.Add(TimeSpan.FromMinutes(jwtConfig.LifeTime)),
+            signingCredentials: new SigningCredentials(new SymmetricSecurityKey(key), 
+                                                        SecurityAlgorithms.HmacSha256));
         return new JwtSecurityTokenHandler().WriteToken(jwt);
     }
 }

@@ -31,11 +31,11 @@ public class AuthorizationController : LemonController
     {
         login.Validate();
         var acc = _db.Accounts.FirstOrDefault(e => e.Email == login.Email && e.Password == login.Password);
-        if (acc == null)
+        if (acc is null)
             throw new Exception("Неврные логин или пароль");
         if (!acc.EmailConfirmed)
         {
-            var mail = MailExtansion.ConfirmMail(acc.Email, _env.Host);
+            var mail = MailExtansion.ConfirmMail(acc.Email, _env.Host, acc.Name);
             await _mailService.SendAsync(mail);
             throw new Exception("Почта не была подтверждена. Направили письмо для подтверждение адреса электронной почты");
         }

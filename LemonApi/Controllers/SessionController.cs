@@ -131,13 +131,19 @@ public class SessionController : LemonController
     }
     double GetScore(PlayerResult result, double sessionTime)
     {
-        var m_coin = 6;
+        var m_coin = 5;
         var m_punches= 2;
         var m_time= 0.5;
-        var m_fails = 1.5;
+        var m_fails = 3;
         var m_alive = 1.2;
         var isAlive = result.DeadTimePoint is null;
 
-        return (result.Coins * m_coin + result.Punches * m_punches + (double)(isAlive ? sessionTime * m_time : result.DeadTimePoint * m_time) - result.Fails * m_fails) * (isAlive ? m_alive : 1); 
+        double s_coin = 50 + result.Coins * m_coin < 500 ? 50 + result.Coins * m_coin : 500;
+        double s_punches = result.Punches * m_punches < 200 ? result.Punches * m_punches : 200;
+        double s_time = isAlive ? sessionTime * m_time : (double)result.DeadTimePoint * m_time;
+        double s_fails = result.Fails * m_fails < 300 ? result.Fails* m_fails : 300;
+
+        var total = (s_coin + s_punches + s_time - s_fails) * (isAlive ? m_alive : 1);
+        return total > 0 ? total : new Random().Next(10, 25); 
     }
 }

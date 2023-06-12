@@ -11,11 +11,12 @@ public static class MailExtansion
 {
     readonly static string wrap = "wrap.html";
     readonly static string confirmContent = "confirm_content.html";
-    public static MailInfo ConfirmMail(string email, string host)
+    public static MailInfo ConfirmMail(string email, string host, string accountName)
     {
         var token = JWTExtansion.GetToken(email);
         var mailStr = Template();
         mailStr.Replace("#content#", LoadFileText(confirmContent));
+        mailStr.Replace("#target-name#", accountName);
         mailStr.Replace("#confirm-url#", host + Endpoints.EMAIL_CONFIRM + $"?token={token}");
         var result = mailStr.ToString();
         return new MailBuilder().SetSubject("Регистрация на портале UnitedHearts")
