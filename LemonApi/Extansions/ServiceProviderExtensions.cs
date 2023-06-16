@@ -10,7 +10,6 @@ using LemonApi.Middlewares;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
-using api_avia.Extensions;
 using LemonApi.Models;
 
 namespace LemonApi.Extensions;

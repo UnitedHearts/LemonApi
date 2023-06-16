@@ -1,9 +1,8 @@
-﻿using LemonApi;
-using Microsoft.OpenApi.Any;
+﻿using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace api_avia.Extensions
+namespace LemonApi.Extensions
 {
     public class SwaggerSchemaFilter : ISchemaFilter
     {

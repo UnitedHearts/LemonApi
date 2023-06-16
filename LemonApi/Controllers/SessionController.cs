@@ -73,7 +73,7 @@ public class SessionController : LemonController
                     var stat = await _db.PlayersSessionsStats.FirstOrDefaultAsync(e => e.Session.Id == session.Id && e.Account.Id == acc.Id);
 
                     var exp = (int)GetScore(participant, session.Duration);
-                    exp = exp > 100 ? exp : new Random().Next(100, 150);
+                    exp = exp > 0 ? exp : 0;
                     statBuilder = stat is null ? new() : new(stat);
                     new CashBuilder(acc.Cash).AddCash(participant.Coins - (stat is null ? 0 : stat.Coins));
 
