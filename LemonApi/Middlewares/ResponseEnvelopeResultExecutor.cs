@@ -20,9 +20,8 @@ internal class ResponseEnvelopeResultExecutor : ObjectResultExecutor
             case TypeCode.String:
                 return context.HttpContext.Response.WriteAsJsonAsync(new Response<object>(result.Value));
             default:
-                if (result.Value is ContentResult)
-                    return base.ExecuteAsync(context, result);
-                result.Value = new Response<object>(result.Value);
+                if (result.Value is not ContentResult) 
+                    result.Value = new Response<object>(result.Value);
                 return base.ExecuteAsync(context, result);
         }
     }
